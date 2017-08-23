@@ -1,0 +1,1 @@
+*/5 * * * * /app/src/main.py sync >> /app/main.log 2>> /app/main.err

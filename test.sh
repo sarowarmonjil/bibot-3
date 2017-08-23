@@ -1,2 +1,2 @@
 #! sh
-python -m unittest discover
+cd src && python -m unittest discover
