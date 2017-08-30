@@ -2,6 +2,7 @@
 # coding: utf-8
 # https://www.huobi.com/
 import time
+from pprint import pprint
 
 import apis
 import orm
@@ -17,6 +18,9 @@ def sync_kline():
     for line in apis.get_interval(apis.BTC, 1, interval + 10)[:-1]:
         orm.create_kline(orm.BTC, 1, line)
 
+
 if __name__ == '__main__':
     if args.cmd == 'sync':
         sync_kline()
+    elif args.cmd == 'show':
+        pprint(apis.get_account_info())
