@@ -6,7 +6,7 @@ WORKDIR /app
 # install deps
 # 阿里源[无奈脸]
 COPY conf/sources.list /etc/apt/sources.list
-RUN deps='ca-certificates python cron'; buildDeps='python-pip wget vim ipython'; \
+RUN deps='ca-certificates python cron supervisor'; buildDeps='python-pip wget vim ipython'; \
     set -x \
     && apt-get update && apt-get install -y $deps $buildDeps --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
@@ -22,6 +22,7 @@ RUN set -x \
 COPY . .
 
 RUN crontab conf/crontab
+RUN ln -s /app/conf/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
 RUN chmod u+x ./run.sh ./src/*
 CMD ["./run.sh"]
