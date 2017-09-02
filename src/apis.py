@@ -1,5 +1,6 @@
 # coding: utf-8
 # https://github.com/huobiapi/API_Docs/wiki
+import math
 import time
 import urllib
 
@@ -8,7 +9,6 @@ import requests
 import settings
 import utils
 from utils import sign, to_decimal
-
 
 BTC = 1
 LTC = 2
@@ -114,6 +114,14 @@ def sell_market(coin_type, amount, trade_password=None, trade_id=None):
         'trade_id': trade_id,
     }
     return post('sell_market', coin_type=coin_type, amount=amount, extra_data=extra_data)
+
+
+def smart_buy(coin_type, amount):
+    func = buy_market if amount > 0 else sell_market
+    amount = math.fabs(amount)
+    amount = to_decimal(amount, 3)
+    if amount != '0.000':
+        func(coin_type, amount)
 
 
 if __name__ == '__main__':

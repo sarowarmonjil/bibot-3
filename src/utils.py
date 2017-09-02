@@ -17,6 +17,11 @@ def to_timestamp(t):
     return calendar.timegm(t.utctimetuple())        # utc timestamp
 
 
+def now():
+    t = datetime.now(pytz.FixedOffset(480))
+    return t.strftime('%Y/%m/%d %H:%M:%S')
+
+
 def sign(params):
     params = sorted(params.iteritems())
     msg = urllib.urlencode(params)
@@ -47,3 +52,39 @@ def pairwise(iterable):
     a, b = itertools.tee(iterable)
     next(b, None)
     return itertools.izip(a, b)
+
+
+def evaluate(items):
+    balance = 0.
+    amount = 0.
+    for vol, closing in items:
+        balance += 500.
+        amount += 0.998 * 500. / closing
+        if vol == 0:
+            balance += 0.998 * amount * closing
+            amount = 0.
+        elif vol == 1:
+            amount += 0.998 * balance / closing
+            balance = 0.
+    return (balance + 0.998 * closing * amount) / len(items)
+
+
+def simulate(items):
+    balance = 500.
+    amount = 0.
+    last = 0
+    for vol, closing in items:
+        if vol != 2 and vol != last:
+            if vol == 0:
+                balance = 0.998 * amount * closing
+                amount = 0.
+            elif vol == 1:
+                amount = 0.998 * balance / closing
+                balance = 0.
+            last = vol
+    return balance + closing * amount
+
+
+if __name__ == '__main__':
+    items = [(1., 28000), (2, 28500), (0, 29000)]
+    print simulate(items)

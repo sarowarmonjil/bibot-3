@@ -4,7 +4,7 @@ import argparse
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('cmd', choices=['sync', 'show'])
+    parser.add_argument('cmd', choices=['sync', 'show', 'sim'])
     return parser.parse_args(args)
 
 

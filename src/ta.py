@@ -60,8 +60,14 @@ def gen_machine_features(close, *args):
     return onehot(features)
 
 
-def _features(close):
-    return gen_machine_features(close, 30, 400)
+def _get_test_data():
+    import orm
+
+    qs = orm.KLine.select(orm.KLine.closing).filter(coin_type='btc', period=1)
+    qs = qs.order_by(orm.KLine.started_at)
+    close = [line.closing for line in qs]
+    features = gen_machine_features(close, 2, 30, 400)
+    return close[-features.shape[0]:], features
 
 
 def describe(features):
@@ -72,13 +78,8 @@ def describe(features):
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
-    import orm
 
-    qs = orm.KLine.select(orm.KLine.closing).filter(coin_type='btc', period=1)
-    qs = qs.order_by(orm.KLine.started_at)
-    close = [line.closing for line in qs]
-
-    features = gen_raw_features(close, 2, 30, 400)
+    close, features = _get_test_data()
     describe(features)
 
     data = gen_human_features(close, 2, 30, 400)

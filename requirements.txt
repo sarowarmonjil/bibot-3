@@ -3,3 +3,4 @@ peewee
 pytz
 numpy
 TA-Lib
+chainer

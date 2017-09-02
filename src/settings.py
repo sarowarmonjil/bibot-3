@@ -12,6 +12,9 @@ DATABASE = {
     'NAME': getenv('DB_NAME', 'db.sqlite'),
 }
 
+LOSS_LIMIT = 0.1
+GAIN_LIMIT = 0.1
+
 
 AKEY = getenv('AKEY')
 SKEY = getenv('SKEY')
