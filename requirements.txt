@@ -1,3 +1,5 @@
 requests
 peewee
 pytz
+numpy
+TA-Lib
