@@ -1,6 +1,7 @@
 # coding: utf-8
 import unittest
 
+import ta
 import utils
 
 
@@ -24,3 +25,11 @@ class TestUtils(unittest.TestCase):
         ]
         for p, d in samples:
             self.assertEqual(utils.to_decimal(p, 2), d)
+
+
+class TestTA(unittest.TestCase):
+
+    def test_gen_machine_features(self):
+        close = [1, 3, 2, 5, 6]
+        features = ta.gen_machine_features(close, 2, 3)
+        self.assertEqual(features.shape, (2, 3 * 21))    # 两条有效数据，每条三个特征

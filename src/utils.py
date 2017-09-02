@@ -1,6 +1,7 @@
 # coding: utf-8
 import calendar
 import hashlib
+import itertools
 import sys
 import urllib
 from datetime import datetime
@@ -40,3 +41,9 @@ def info(fmt, *args):
 
 def error(fmt, *args):
     _print(sys.stderr, settings.ERROR, fmt, *args)
+
+
+def pairwise(iterable):
+    a, b = itertools.tee(iterable)
+    next(b, None)
+    return itertools.izip(a, b)
