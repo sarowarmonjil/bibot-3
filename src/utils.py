@@ -76,10 +76,10 @@ def simulate(items):
     for vol, closing in items:
         if vol != 2 and vol != last:
             if vol == 0:
-                balance = 0.998 * amount * closing
+                balance = 0.9995 * amount * closing
                 amount = 0.
             elif vol == 1:
-                amount = 0.998 * balance / closing
+                amount = 0.9995 * balance / closing
                 balance = 0.
             last = vol
     return balance + closing * amount

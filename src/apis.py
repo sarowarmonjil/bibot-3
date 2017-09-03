@@ -48,7 +48,7 @@ def post(method=None, extra_data=None, **kws):
     # 错误处理[摊手]
     assert r.status_code == 200
     r = r.json()
-    kws = ', '.join('%s=%s' for k, v in kws.iteritems())
+    kws = ', '.join('%s=%s' % item for item in kws.iteritems())
     assert 'code' not in r, '%s(%s) => %d %s' % (method, kws, r['code'], r['message'])
     utils.info('%s(%s) => %r', method, kws, r)
     return r
@@ -60,7 +60,7 @@ def get_account_info():
 
 def buy(coin_type, price, amount, trade_password=None, trade_id=None):
     price = to_decimal(price, 2)
-    amount = to_decimal(amount, 2)
+    amount = to_decimal(amount, 4)
     extra_data = {
         'trade_password': trade_password,
         'trade_id': trade_id,
@@ -69,6 +69,7 @@ def buy(coin_type, price, amount, trade_password=None, trade_id=None):
 
 
 def buy_market(coin_type, amount, trade_password=None, trade_id=None):
+    # https://github.com/huobiapi/API_Docs/wiki/REST-buy_market
     amount = to_decimal(amount, 2)  # amount的单位是元
     extra_data = {
         'trade_password': trade_password,
@@ -108,7 +109,7 @@ def sell(coin_type, price, amount, trade_password=None, trade_id=None):
 
 
 def sell_market(coin_type, amount, trade_password=None, trade_id=None):
-    amount = to_decimal(amount, 4)  # amount的单位是数字货币个数
+    amount = to_decimal(amount, 4)
     extra_data = {
         'trade_password': trade_password,
         'trade_id': trade_id,
@@ -116,12 +117,18 @@ def sell_market(coin_type, amount, trade_password=None, trade_id=None):
     return post('sell_market', coin_type=coin_type, amount=amount, extra_data=extra_data)
 
 
-def smart_buy(coin_type, amount):
-    func = buy_market if amount > 0 else sell_market
-    amount = math.fabs(amount)
-    amount = to_decimal(amount, 3)
-    if amount != '0.000':
-        func(coin_type, amount)
+def smart_buy(coin_type, price, amount):
+    if amount >= 0.0010:
+        return buy(coin_type, price, amount)
+    elif amount <= -0.0010:
+        return sell(coin_type, price, math.fabs(amount))
+
+
+def smart_buy_market(coin_type, cny):
+    if cny > 30.:
+        return buy_market(coin_type, cny)
+    elif cny < -30.:
+        return sell_market(coin_type, cny)
 
 
 if __name__ == '__main__':
