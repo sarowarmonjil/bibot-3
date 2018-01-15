@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # coding: utf-8
 # https://www.huobi.com/
-import time
+import itertools
 from pprint import pprint
 
 import apis
@@ -9,14 +9,14 @@ import orm
 from arg import args
 
 
+def _sync_kline(symbol, period):
+    for line in apis.get_interval(symbol, period, 2000)[:-1]:
+        orm.create_kline(symbol, period, line)
+
+
 def sync_kline():
-    last_time = orm.KLine.get_latest_time()
-    if last_time:
-        interval = int((time.time() - last_time) / 60)
-    else:
-        interval = 2000
-    for line in apis.get_interval(apis.BTC, 1, interval + 10)[:-1]:
-        orm.create_kline(orm.BTC, 1, line)
+    for symbol, period in itertools.product(apis.SYMBOLS, apis.PERIODS):
+        _sync_kline(symbol, period)
 
 
 if __name__ == '__main__':

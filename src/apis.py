@@ -10,20 +10,28 @@ import utils
 from utils import sign, to_decimal
 
 
-BTC = 1
-LTC = 2
+BTC = 'btcusdt'
+ETH = 'ethusdt'
+EOS = 'eosusdt'
+ZEC = 'zecusdt'
+_1MIN = '1min'
+_5MIN = '5min'
+_15MIN = '15min'
+_30MIN = '30min'
+_60MIN = '60min'
+
+SYMBOLS = [BTC, ETH, EOS, ZEC]
+PERIODS = [_1MIN, _5MIN, _15MIN, _30MIN, _60MIN]
 
 
-def get_interval(coin_type=BTC, period=1, length=300):
+def get_interval(symbol=BTC, period=_1MIN, size=300):
     # https://github.com/huobiapi/API_Docs/wiki/REST-Interval
-    assert length > 0
-    if length > 2000:
-        print 'Warning: The length should be less than or equal to 2000'
-    coin_type = {BTC: 'btc', LTC: 'ltc'}[coin_type]
-    url = 'https://api.huobi.com/staticmarket/%s_kline_%03d_json.js?length=%d'
-    url = url % (coin_type, period, length)
-    r = requests.get(url)
-    return r.json()
+    assert size > 0
+    if size > 2000:
+        print 'Warning: The size should be less than or equal to 2000'
+    url = 'https://api.huobi.pro/market/history/kline'
+    r = requests.get(url, {'symbol': symbol, 'period': period, 'size': size})
+    return r.json()['data']
 
 
 def post(method=None, extra_data=None, **kws):
@@ -117,8 +125,8 @@ def sell_market(coin_type, amount, trade_password=None, trade_id=None):
 
 
 if __name__ == '__main__':
-    print get_interval(BTC, 1, 2)
-    print get_account_info()
+    print get_interval()
+    # print get_account_info()
     # print sell(BTC, 30000, 0.001)   # 4523039042L
     # print get_orders()
     # print get_new_deal_orders()
